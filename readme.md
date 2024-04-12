@@ -31,7 +31,7 @@ Typically this is used with a changelog builder:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
 - name: Notion release notes        
-  uses: infinitaslearning/notion-release-notes@main        
+  uses: secret-spa/notion-release-notes@main        
   with:          
     token: ${{ secrets.NOTION_TOKEN }}
     database: 619f0845c68a4c18837ebdb9812b90c0
