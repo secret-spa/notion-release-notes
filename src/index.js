@@ -7,10 +7,10 @@ try {
   const body = core.getInput('body')
   const version = core.getInput('version')
   const token = core.getInput('token')
-  const platform = core.getInput('tags') || ''
+  const platform = core.getInput('platform') || ''
   const database = core.getInput('database')
 
-  core.debug('Creating notion client ...')
+  core.debug('Creating notion client ...', version, platform)
   const notion = new Client({
     auth: token,
     logLevel: LogLevel.ERROR
@@ -61,7 +61,9 @@ try {
           ]
         },
         Platform: {
-          select: platform
+          select: {
+            name: platform
+          }
         }
       },
       children: blocks
