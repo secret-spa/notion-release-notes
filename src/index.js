@@ -30,7 +30,7 @@ try {
         },
         {
           property: 'Platform',
-          text: {
+          select: {
             equals: platform
           }
         }
@@ -61,7 +61,7 @@ try {
           ]
         },
         Platform: {
-          multi_select: platform
+          select: platform
         }
       },
       children: blocks
