@@ -19339,7 +19339,7 @@ try {
   const token = core.getInput('token')
   const platform = core.getInput('platform') || ''
   const database = core.getInput('database')
-  const date = new Date().toISOString()
+  const date = new Date().toISOString().split('T')[0]
 
   core.debug('Creating notion client ...', version, platform)
   const notion = new Client({
