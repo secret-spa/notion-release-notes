@@ -19339,7 +19339,6 @@ try {
   const token = core.getInput('token')
   const platform = core.getInput('tags') || ''
   const database = core.getInput('database')
-  const owner = core.getInput('owner')
 
   core.debug('Creating notion client ...')
   const notion = new Client({
@@ -19361,7 +19360,7 @@ try {
         },
         {
           property: 'Platform',
-          text: {
+          select: {
             equals: platform
           }
         }
@@ -19392,17 +19391,7 @@ try {
           ]
         },
         Platform: {
-          multi_select: platform
-        },
-        'Released by': {
-          rich_text: [
-            {
-              type: 'text',
-              text: {
-                content: owner
-              }
-            }
-          ]
+          select: platform
         }
       },
       children: blocks
