@@ -19394,6 +19394,11 @@ try {
           select: {
             name: platform
           }
+        },
+        Status: {
+          select: {
+            name: 'In Progress'
+          }
         }
       },
       children: blocks
