@@ -5,11 +5,11 @@ const { markdownToBlocks } = require('@tryfabric/martian')
 try {
   // `who-to-greet` input defined in action metadata file
   const body = core.getInput('body')
-  const name = core.getInput('name')
+  const version = core.getInput('version')
   const token = core.getInput('token')
-  const tags = core.getInput('tags') || ''
+  const platform = core.getInput('tags') || ''
   const database = core.getInput('database')
-  const date = new Date().toISOString()
+  const owner = core.getInput('owner')
 
   core.debug('Creating notion client ...')
   const notion = new Client({
@@ -18,37 +18,71 @@ try {
   })
 
   const blocks = markdownToBlocks(body)
-  const tagArray = tags ? tags.split(',').flatMap(tag => { return { name: tag } }) : []
 
-  core.debug('Creating page ...')
-  notion.pages.create({
-    parent: {
-      database_id: database
-    },
-    properties: {
-      Name: {
-        title: [
-          {
-            text: {
-              content: name
-            }
+  notion.databases.query({
+    database_id: database,
+    filter: {
+      and: [
+        {
+          property: 'Version',
+          text: {
+            contains: version
           }
-        ]
+        },
+        {
+          property: 'Platform',
+          text: {
+            equals: platform
+          }
+        }
+      ]
+    }
+  }).then((queryResult) => {
+    console.log(queryResult)
+
+    if (queryResult.results.length > 0) {
+      core.info('🚨 Changelog already exists for this version and platform.')
+      core.setOutput('status', 'skipped')
+      return
+    }
+
+    core.debug('Creating page ...')
+    notion.pages.create({
+      parent: {
+        database_id: database
       },
-      Date: {
-        date: {
-          start: date
+      properties: {
+        Version: {
+          title: [
+            {
+              text: {
+                content: version
+              }
+            }
+          ]
+        },
+        Platform: {
+          multi_select: platform
+        },
+        'Released by': {
+          rich_text: [
+            {
+              type: 'text',
+              text: {
+                content: owner
+              }
+            }
+          ]
         }
       },
-      Tags: {
-        multi_select: tagArray
-      }
-    },
-    children: blocks
-  }).then((result) => {
-    core.debug(`${result}`)
-    core.setOutput('status', 'complete')
+      children: blocks
+    }).then((result) => {
+      core.debug(`${result}`)
+      core.info('🎉 Changelog published to Notion!')
+      core.setOutput('status', 'complete')
+    })
   })
 } catch (error) {
+  core.info('❌ Changelog failed to be published (see error in error message).')
   core.setFailed(error.message)
 }
