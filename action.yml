@@ -19,6 +19,9 @@ inputs:
   platform:  
     description: 'Platform for the release'
     required: true
+  author:  
+    description: 'Author of the release'
+    required: false
 outputs:
   status: 
     description: 'The status of the update'

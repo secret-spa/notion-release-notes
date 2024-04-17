@@ -10,6 +10,16 @@ try {
   const platform = core.getInput('platform') || ''
   const database = core.getInput('database')
   const date = new Date().toISOString().split('T')[0]
+  const author = core.getInput('author') || ''
+
+  const authorId = {
+    1864825: 'db283023-c18c-4aa3-93b4-3f78d9907dca',
+    59967673: 'd84e5646-cade-4eb4-97be-8b6c97eec35d',
+    151772: '32f88495-36f8-4073-95e7-f0e2f8b47e95'
+  }[author]
+
+  console.log('authorId', authorId)
+  console.log('author', author)
 
   core.debug('Creating notion client ...', version, platform)
   const notion = new Client({
@@ -75,6 +85,14 @@ try {
           date: {
             start: date
           }
+        },
+        'Released by': {
+          people: authorId
+            ? [{
+                object: 'user',
+                id: authorId
+              }]
+            : []
         }
       },
       children: blocks
